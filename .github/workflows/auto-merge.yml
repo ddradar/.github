@@ -8,9 +8,10 @@ on:
 jobs:
   auto-merge:
     name: Auto merge
-    if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
+    if: github.event.review && github.event.review.state == 'approved'
     runs-on: ubuntu-slim
     steps:
+      # Note: You need to install app on your repository or organization
       - name: Generate GitHub App Token
         id: generate-token
         uses: actions/create-github-app-token@v3.1.1
