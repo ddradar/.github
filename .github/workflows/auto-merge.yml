@@ -15,7 +15,7 @@ jobs:
         id: generate-token
         uses: actions/create-github-app-token@v3.1.1
         with:
-          client-id: Iv23libSdaDoKpfw7QDt
+          client-id: ${{ vars.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Check reviewer
@@ -47,7 +47,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-          LGTM_URL: https://user-images.githubusercontent.com/24802730/74030931-9a21ac00-49f3-11ea-872e-374d5bd3e586.jpg
+          LGTM_URL: https://raw.githubusercontent.com/ddradar/.github/refs/heads/main/assets/images/genbaneko.webp
       - name: Enable Auto merge
         if: steps.check_member.outputs.is_member == 'true'
         run: gh pr merge "$PR_URL" --auto --squash
