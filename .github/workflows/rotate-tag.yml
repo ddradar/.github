@@ -1,0 +1,33 @@
+# Tag rotation for GitHub Actions
+# When you create v1.2.3, this action will create v1 and v1.2 tags, which pointing v1.2.3 commit.
+name: Rotate Major & Minor tag
+
+on:
+  workflow_call:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    name: Create Git Tag
+    if: github.event.release && github.event.release.prerelease == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Get Major & Minor version
+        id: version
+        run: |
+          echo "major=$(echo ${{ github.event.release.tag_name }} | cut -d. -f1)" >> $GITHUB_OUTPUT
+          echo "minor=$(echo ${{ github.event.release.tag_name }} | cut -d. -f2)" >> $GITHUB_OUTPUT
+
+      - name: Push Git Tag (Major, Minor)
+        run: |
+          git config user.name ${{ vars.GH_ACTIONS_COMMIT_NAME }}
+          git config user.email ${{ vars.GH_ACTIONS_COMMIT_EMAIL }}
+          git tag ${{ steps.version.outputs.major }}
+          git tag ${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}
+          git push --tags --force
